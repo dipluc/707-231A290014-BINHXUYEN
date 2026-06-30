@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Sách Sản Phẩm</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #search-container {
+            margin-bottom: 20px;
+        }
+        #search-input {
+            padding: 10px;
+            width: 300px;
+            max-width: 100%;
+        }
+        #product-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .product-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .product-item h3 {
+            margin-top: 0;
+        }
+        #error-message {
+            color: red;
+            display: none;
+            margin-top: 10px;
+        }
+        @media (max-width: 600px) {
+            #product-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Danh Sách Sản Phẩm</h1>
+    <div id="search-container">
+        <input type="text" id="search-input" placeholder="Tìm kiếm theo tên sản phẩm...">
+    </div>
+    <div id="product-list"></div>
+    <div id="error-message">Không tìm thấy sản phẩm nào khớp với tìm kiếm.</div>
+
+    <script>
+        // Mảng sản phẩm (ít nhất 5)
+        const products = [
+            { id: 1, name: 'Laptop Dell', price: 15000000, description: 'Laptop cao cấp' },
+            { id: 2, name: 'Điện thoại iPhone', price: 20000000, description: 'Smartphone hiện đại' },
+            { id: 3, name: 'Tai nghe Sony', price: 2000000, description: 'Tai nghe không dây' },
+            { id: 4, name: 'Máy ảnh Canon', price: 10000000, description: 'Máy ảnh chuyên nghiệp' },
+            { id: 5, name: 'Bàn phím cơ', price: 1500000, description: 'Bàn phím gaming' },
+            { id: 6, name: 'Chuột Logitech', price: 500000, description: 'Chuột văn phòng' }
+        ];
+
+        const productList = document.getElementById('product-list');
+        const searchInput = document.getElementById('search-input');
+        const errorMessage = document.getElementById('error-message');
+
+        // Hàm render danh sách sản phẩm
+        function renderProducts(filteredProducts) {
+            productList.innerHTML = ''; // Xóa danh sách cũ
+            if (filteredProducts.length === 0) {
+                errorMessage.style.display = 'block';
+            } else {
+                errorMessage.style.display = 'none';
+                filteredProducts.forEach(product => {
+                    const item = document.createElement('div');
+                    item.classList.add('product-item');
+                    item.innerHTML = `
+                        <h3>${product.name}</h3>
+                        <p>Giá: ${product.price.toLocaleString('vi-VN')} VND</p>
+                        <p>${product.description}</p>
+                    `;
+                    productList.appendChild(item);
+                });
+            }
+        }
+
+        // Hiển thị danh sách ban đầu
+        renderProducts(products);
+
+        // Event listener cho tìm kiếm (keyup để realtime)
+        searchInput.addEventListener('keyup', function() {
+            const query = this.value.trim().toLowerCase(); // Xử lý input: trim và lowercase
+            const filtered = products.filter(product => 
+                product.name.toLowerCase().includes(query) // Tìm kiếm không phân biệt case
+            );
+            renderProducts(filtered);
+        });
+    </script>
+</body>
+</html>

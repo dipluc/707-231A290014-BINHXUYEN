@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Đăng Ký Người Dùng</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #error-message {
+            color: red;
+            display: none;
+        }
+        #success-message {
+            color: green;
+            display: none;
+        }
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            input, button {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Form Đăng Ký</h1>
+    <form id="registration-form">
+        <label for="name">Tên:</label>
+        <input type="text" id="name" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" required>
+
+        <label for="password">Mật khẩu:</label>
+        <input type="password" id="password" required>
+
+        <label>
+            <input type="checkbox" id="terms" required>
+            Đồng ý điều khoản
+        </label>
+
+        <button type="submit">Đăng Ký</button>
+    </form>
+    <div id="error-message"></div>
+    <div id="success-message">Đăng ký thành công! Dữ liệu đã lưu vào LocalStorage.</div>
+
+    <script>
+        const form = document.getElementById('registration-form');
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Ngăn submit mặc định
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const terms = document.getElementById('terms').checked;
+
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+
+            // Validate
+            if (!name || !email || !password || !terms) {
+                errorMessage.textContent = 'Vui lòng điền đầy đủ thông tin và đồng ý điều khoản.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Validate email (sử dụng regex đơn giản)
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                errorMessage.textContent = 'Email không hợp lệ.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Validate password: ít nhất 8 ký tự, có hoa/thường/số
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+            if (!passwordRegex.test(password)) {
+                errorMessage.textContent = 'Mật khẩu phải ít nhất 8 ký tự, bao gồm chữ hoa, thường và số.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Lưu vào LocalStorage
+            const userData = { name, email, password }; // Lưu mật khẩu plaintext - không an toàn cho production
+            localStorage.setItem('user', JSON.stringify(userData));
+
+            // Hiển thị thành công
+            successMessage.style.display = 'block';
+            form.reset(); // Reset form
+        });
+    </script>
+</body>
+</html>
